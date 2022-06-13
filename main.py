@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import pygame as pyg
 import os
 import random
@@ -103,8 +104,7 @@ class Enemy:
             self.text = "ADDITION GOBLIN!"
             self.alive = True
             self.coords = pyg.Rect(400,230,54,59)
-            self.image = pyg.transform.scale(pyg.image.load(os.path.join('Assets/Enemies','goblin.png')),(54,59))
-            
+            self.image = pyg.transform.scale(pyg.image.load(os.path.join('Assets/Enemies','goblin.png')),(54,59))        
 
 def handle_input(keys_pressed,playerAnswer):
     if keys_pressed[pyg.K_0]:
@@ -180,10 +180,15 @@ def main():
 
             if event.type == pyg.KEYDOWN:
                 if event.key == pyg.K_RETURN:
-                    if int(playerAnswer) == monster.answer :
-                        score +=1
-                        playerAnswer = ""
-                        monster = Enemy()
+                    try:
+                        if int(playerAnswer) == monster.answer :
+                            score +=1
+                            monster = Enemy()
+                            playerAnswer = ""
+                    except ValueError:
+                        print("Value Error. Probably put a negative sign in the wrong place...")
+                        
+                    
                         
                 keys_pressed = pyg.key.get_pressed()
                 playerAnswer = handle_input(keys_pressed,playerAnswer)
