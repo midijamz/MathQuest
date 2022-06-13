@@ -70,7 +70,7 @@ def draw_end(score):
     theScore = END_TEXT.render(
         str(score), 1, GREEN
     )
-    WIN.blit(theScore, (424,202))
+    WIN.blit(theScore, (424,167))
     pyg.display.update()
 
 class Enemy:
@@ -149,44 +149,56 @@ def main():
     monster = Enemy()
     menu = True
     done = False
+    repeat = False
+    start_ticks = pyg.time.get_ticks()
     while run:
         clock.tick(FPS)
 
 
-        ## Main Menu Here ##
-        while menu:
+        ## -- Main Menu Here -- ##
+        while menu and not repeat:
             draw_title()
             for event in pyg.event.get():
                 if event.type == pyg.QUIT:
                     run=False
+                    menu=False
+                    break
                 if event.type == pyg.KEYDOWN:
                     if event.key == pyg.K_RETURN:
                         menu=False
                         #Start timer when game begins.
                         start_ticks=pyg.time.get_ticks()
-        ## Main Menu END ##
+        ## -- Main Menu END -- ##
 
 
+        ## -- Game -- ##
 
-        ## Main Game ##
-
-        timeLeft = round(30 - (pyg.time.get_ticks()-start_ticks)/1000, 1)
+        timeLeft = round(5 - (pyg.time.get_ticks()-start_ticks)/1000, 1)
 
         if timeLeft <= 0 :
             done = True
+            start_ticks=pyg.time.get_ticks()
         
 
         for event in pyg.event.get():
 
             if event.type == pyg.KEYDOWN:
                 if event.key == pyg.K_RETURN:
+                    #Hit enter to play again.
+                    if done and ((pyg.time.get_ticks()-start_ticks)/1000 > 2):
+                        score = 0
+                        done = False
+                        monster = Enemy()
+                        playerAnswer = ""
+                        start_ticks=pyg.time.get_ticks()
+
                     try:
                         if int(playerAnswer) == monster.answer :
                             score +=1
                             monster = Enemy()
                             playerAnswer = ""
                     except ValueError:
-                        print("Value Error. Probably put a negative sign in the wrong place...")
+                        print("Value Error. Probably put a negative sign in the wrong place or hit enter when it was empty...")
                         
                     
                         
@@ -196,10 +208,8 @@ def main():
             if event.type == pyg.QUIT:
                 run=False
 
-        print(playerAnswer)
         if not done:
             draw_window(player,monster,playerAnswer,score,timeLeft)
         else: draw_end(score)
         
-
 main()
