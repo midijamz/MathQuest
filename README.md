@@ -3,7 +3,9 @@
 
 Written in PyGame. Currently there are three different kinds of monsters: the Subtraction Skeleton, the Multiplication Mushroom, and the Addition Goblin.
 
-https://user-images.githubusercontent.com/74222393/173456749-bc11d32b-6441-498d-8127-baa5b943386d.mp4
+
+https://user-images.githubusercontent.com/74222393/173465124-3d37a951-5862-4c4b-ae60-b7e194d755e4.mp4
+
 
 Still very much a work in progress. Next on the list is animating the sprites fully and adding sound.
 
