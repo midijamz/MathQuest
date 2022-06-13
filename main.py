@@ -13,7 +13,6 @@ END_TEXT = pyg.font.SysFont('Arial', 30)
 FPS = 60
 
 LEVEL = pyg.transform.scale(pyg.image.load(os.path.join('Assets','level.png')), (640,360))
-PLAYER = pyg.transform.scale(pyg.image.load(os.path.join('Assets','player.png')),(40,60))
 MATHQUEST = pyg.transform.scale(pyg.image.load(os.path.join('Assets','mathquest.png')),(178,30))
 TITLE = pyg.image.load(os.path.join('Assets','title.png'))
 END =  pyg.image.load(os.path.join('Assets','score_screen.png'))
@@ -29,9 +28,8 @@ GREEN = (0,255,0)
 TIME_UP = pyg.USEREVENT + 1
 
 
-def draw_window(player,monster,playerAnswer,score,timeLeft):
+def draw_window(playerGroup,monster,playerAnswer,score,timeLeft):
     WIN.blit(LEVEL, (0,0))
-    WIN.blit(PLAYER, (player.x,player.y))
     WIN.blit(MATHQUEST, (10,10))
     WIN.blit(monster.image, (monster.coords.x,monster.coords.y))
     question = TEXT.render(
@@ -57,12 +55,13 @@ def draw_window(player,monster,playerAnswer,score,timeLeft):
     timer = TEXT.render(
         str(timeLeft), 1, WHITE
     )
-    WIN.blit(timeTitle, (player.x - 70, 320))
-    WIN.blit(timer, (player.x + 40, 320))
+    WIN.blit(timeTitle, (140, 320))
+    WIN.blit(timer, ( 240, 320))
     WIN.blit(theScoreTitle, (100,45))
     WIN.blit(theScore, (180, 45))
     WIN.blit(question, (355, 320))
     WIN.blit(answer,(450, 320))
+    playerGroup.draw(WIN)
     pyg.display.update()
 
 def draw_end(score):
@@ -106,6 +105,42 @@ class Enemy:
             self.coords = pyg.Rect(400,230,54,59)
             self.image = pyg.transform.scale(pyg.image.load(os.path.join('Assets/Enemies','goblin.png')),(54,59))        
 
+class Player(pyg.sprite.Sprite):
+    def __init__(self):
+        super(Player, self).__init__()
+        self.images= []
+        #still
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets','player.png')),(100,79)))
+        #attacking
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','1.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','2.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','3.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','4.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','5.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','6.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','7.png')),(100,79)))
+        self.images.append(pyg.transform.scale(pyg.image.load(os.path.join('Assets/playerAttack','8.png')),(100,79)))
+
+        self.index=0
+
+        self.attacking = False
+
+        self.image = self.images[self.index]
+
+        self.rect = pyg.Rect(190,209,30,20)
+
+    def update(self):
+        if self.attacking: 
+            self.index += 1
+
+            if self.index >= len(self.images):
+                self.index=0
+                self.attacking=False
+
+            self.image = self.images[self.index]
+        else: self.image = self.images[0]
+
+
 def handle_input(keys_pressed,playerAnswer):
     if keys_pressed[pyg.K_0]:
         playerAnswer += "0"
@@ -141,7 +176,8 @@ def draw_title():
     pyg.display.update()
 
 def main():
-    player = pyg.Rect(190,228,30,20)
+    player = Player()
+    playerGroup = pyg.sprite.Group(player)
     score = 0
     run = True
     clock = pyg.time.Clock()
@@ -173,7 +209,7 @@ def main():
 
         ## -- Game -- ##
 
-        timeLeft = round(5 - (pyg.time.get_ticks()-start_ticks)/1000, 1)
+        timeLeft = round(30 - (pyg.time.get_ticks()-start_ticks)/1000, 1)
 
         if timeLeft <= 0 :
             done = True
@@ -197,6 +233,7 @@ def main():
                             score +=1
                             monster = Enemy()
                             playerAnswer = ""
+                            player.attacking = True
                     except ValueError:
                         print("Value Error. Probably put a negative sign in the wrong place or hit enter when it was empty...")
                         
@@ -209,7 +246,10 @@ def main():
                 run=False
 
         if not done:
-            draw_window(player,monster,playerAnswer,score,timeLeft)
+            if player.attacking :
+                playerGroup.update()
+            draw_window(playerGroup,monster,playerAnswer,score,timeLeft)
+            
         else: draw_end(score)
         
 main()

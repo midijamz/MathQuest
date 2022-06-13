@@ -5,7 +5,7 @@ Written in PyGame. Currently there are three different kinds of monsters: the Su
 
 https://user-images.githubusercontent.com/74222393/173456749-bc11d32b-6441-498d-8127-baa5b943386d.mp4
 
-Still very much a work in progress. Next on the list is animating the sprites to where the player attacks the monster when a correct answer is selected and adding sound.
+Still very much a work in progress. Next on the list is animating the sprites fully and adding sound.
 
 Monster sprites from : https://luizmelo.itch.io/monsters-creatures-fantasy
 Character sprite from : https://brullov.itch.io/generic-char-asset
